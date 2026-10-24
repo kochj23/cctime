@@ -9,8 +9,15 @@ function getClaudeProjectsDir(): string {
   return join(homedir(), '.claude', 'projects');
 }
 
-function encodeProjectPath(projectPath: string): string {
-  return projectPath.replace(/\//g, '-');
+/**
+ * Encode a filesystem path the way Claude Code names its `~/.claude/projects`
+ * directories. Claude Code replaces every non-alphanumeric character with `-`
+ * (not just `/`), so `/Users/me/.config/app` becomes `-Users-me--config-app`.
+ * Only replacing `/` meant `--project` filtering silently matched nothing for
+ * any path containing a `.` or `_`.
+ */
+export function encodeProjectPath(projectPath: string): string {
+  return projectPath.replace(/[^a-zA-Z0-9]/g, '-');
 }
 
 const RELEVANT_TYPES = new Set(['assistant', 'user']);
